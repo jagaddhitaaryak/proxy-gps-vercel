@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
     // Ini memberi tahu browser untuk mengizinkan 'admin.html' Anda berbicara dengan Vercel.
 
     // GANTI URL DI BAWAH INI
-    res.setHeader('Access-Control-Allow-Origin', 'https://jagaddhitaaryak.github.io/truck-kontrak'); 
+    res.setHeader('Access-Control-Allow-Origin', 'https://jagaddhitaaryak.github.io'); 
 
     // Header lain yang diperlukan untuk CORS
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
