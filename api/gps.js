@@ -1,49 +1,30 @@
-// Nama file: api/gps.js
-const fetch = require('node-fetch');
+// Nama file: api/gps.js (KODE TES SEMENTARA)
 
 module.exports = async (req, res) => {
-    // --- PASTIKAN URL INI BENAR ---
-    const ALLOWED_ORIGIN = 'https://jagaddhitaaryak.github.io'; 
-
-    // --- PASTIKAN HEADER INI DISET ---
+    // --- Header CORS ---
+    const ALLOWED_ORIGIN = 'https://jagaddhitaaryak.github.io';
     res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN);
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+    // Tangani request OPTIONS (preflight)
     if (req.method === 'OPTIONS') {
+        console.log('Menerima request OPTIONS, mengirim 200 OK'); // Log untuk Vercel
         return res.status(200).end();
     }
 
-    if (req.method !== 'POST') {
-        return res.status(405).send({ error: 'Method Not Allowed' });
-    }
-
-    const API_URL = 'https://vtsapi.easygo-gps.co.id/api/report/lastposition';
-    const TOKEN = 'FC52B9C3421991B83DE234DA9E09'; // Token Anda
-
-    try {
-        const apiResponse = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'token': TOKEN },
-            body: JSON.stringify({}) 
+    // Tangani request POST (kirim data tes sederhana)
+    if (req.method === 'POST') {
+        console.log('Menerima request POST, mengirim data tes'); // Log untuk Vercel
+        res.setHeader('Cache-Control', 'no-cache'); // Nonaktifkan cache untuk tes
+        return res.status(200).json({ 
+            message: "Tes berhasil! Header CORS seharusnya ada.",
+            timestamp: new Date().toISOString() 
         });
-
-        if (!apiResponse.ok) {
-            let errorBody = {};
-            try { errorBody = await apiResponse.json(); } catch (e) {}
-            console.error(`API EasyGo Error (${apiResponse.status}):`, errorBody);
-            return res.status(apiResponse.status).send({ 
-                error: `Gagal mengambil data dari API EasyGo: ${apiResponse.statusText}`,
-                details: errorBody 
-            });
-        }
-
-        const data = await apiResponse.json();
-        res.setHeader('Cache-Control', 's-maxage=1800, stale-while-revalidate'); // Cache 30 menit
-        res.status(200).send(data);
-
-    } catch (error) {
-        console.error("Error di Vercel Function:", error.message);
-        res.status(500).send({ error: "Terjadi kesalahan internal pada proxy server Vercel." });
     }
+
+    // Tangani metode lain
+    console.log(`Menerima request ${req.method}, mengirim 405 Method Not Allowed`); // Log untuk Vercel
+    res.setHeader('Allow', 'POST, OPTIONS');
+    return res.status(405).json({ error: 'Method Not Allowed' });
 };
